@@ -1,0 +1,5 @@
+#!/bin/bash
+
+while read file ; do
+  /usr/lib/rpm/elfdeps --provides "$@" $file | awk '{ print "ros(" $0 ")"; }'
+done
