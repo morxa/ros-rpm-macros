@@ -2,7 +2,7 @@
 
 while read file ; do
   for req in $(/usr/lib/rpm/elfdeps --requires "$@" $file) ; do
-    provider=$(rpm -q --whatprovides "$req")
+    provider=$(rpm -q --whatprovides "ros($req)")
     if [[ $provider == ros-* ]] ; then
       echo "ros($req)"
     else
