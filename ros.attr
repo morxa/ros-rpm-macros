@@ -1,6 +1,6 @@
-%__ros_provides     %{_rpmconfigdir}/ros.prov %{?__filter_GLIBC_PRIVATE:--filter-private}
-%__ros_requires     %{_rpmconfigdir}/ros.req %{?__filter_GLIBC_PRIVATE:--filter-private}
 %__ros_path         ^/usr/lib.*/ros/.*$
+%__ros_provides     %{_rpmconfigdir}/ros.prov %{?__filter_GLIBC_PRIVATE:--filter-private}
+%__ros_requires     %{_rpmconfigdir}/ros.req %__ros_path %{?__filter_GLIBC_PRIVATE:--filter-private}
 %__ros_magic        ^(setuid,? )?(setgid,? )?(sticky )?ELF (32|64)-bit.*$
 %__ros_flags        exeonly,magic_and_path
 %__elf_exclude_path %__ros_path

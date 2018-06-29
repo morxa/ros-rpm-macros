@@ -1,9 +1,23 @@
 #!/bin/bash
 
+if [ $# -lt 1 ] ; then
+  echo "Missing arguments." >&2
+  echo "Usage: $0 ROSPATH [FILES...]" >&2
+  exit 1
+fi
+
+ROSPATH=$1
 while read file ; do
-  for req in $(/usr/lib/rpm/elfdeps --requires "$@" $file) ; do
-    provider=$(rpm -q --whatprovides "ros($req)")
-    if [[ $provider == ros-* ]] ; then
+  for req in $(/usr/lib/rpm/elfdeps --requires "${@:2}" $file) ; do
+    # Remove suffix of the form ()(64bit), ()(), ....
+    # This may seem a bit redundant, because elfdeps adds them, but we don't
+    # want to generate the suffix ourselves, but instead use the suffix provided
+    # by elfdeps.
+    soname=${req/\(*/}
+    # Check whether the soname is provided by a library in ROSPATH
+    ldd $file | grep $soname | awk '{ print $3; }' | grep -q $ROSPATH
+    if [ $? -eq 0 ] ; then
+      # soname is provided by lib in ROSPATH, assume it's a ROS package
       echo "ros($req)"
     else
       echo $req
