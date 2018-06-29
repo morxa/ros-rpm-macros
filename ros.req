@@ -15,10 +15,14 @@ while read file ; do
     # by elfdeps.
     soname=${req/\(*/}
     # Check whether the soname is provided by a library in ROSPATH
-    ldd $file | grep $soname | awk '{ print $3; }' | grep -q $ROSPATH
-    if [ $? -eq 0 ] ; then
+    path=$(ldd $file | grep $soname | awk '{ print $3; }')
+    if [[ "$path" =~ $ROSPATH ]] ; then
       # soname is provided by lib in ROSPATH, assume it's a ROS package
       echo "ros($req)"
+    elif [[ "$path" == "not" ]] ; then
+      # No library found that provides the soname.
+      # The soname must be provided by a library of this package, skip it.
+      continue
     else
       echo $req
     fi
